@@ -1,7 +1,3 @@
-<script>
-    import { goto } from '$app/navigation';
-</script>
-
 <div class="container mx-auto p-8 flex flex-col items-center justify-center min-h-[80vh]">
     <h1 class="text-4xl font-bold mb-6 text-center">Ejemplo de Integración con Apache Guacamole</h1>
     
