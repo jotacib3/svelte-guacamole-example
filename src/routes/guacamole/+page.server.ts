@@ -11,8 +11,8 @@ export const actions = {
                     'SSH Connection': {
                         protocol: 'ssh',
                         parameters: {
-                            hostname: 'localhost',
-                            port: '2222',
+                            hostname: 'ssh-server',  // Cambiado de 'localhost' al nombre del contenedor
+                            port: '22',             // Cambiado a 22 (puerto interno del contenedor)
                             username: 'root',
                             password: 'password123',
                             'ignore-cert': 'true'
