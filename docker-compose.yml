@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  # PostgreSQL database service
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: guacamole_db          # Database name
+      POSTGRES_USER: guacamole_user      # Database user
+      POSTGRES_PASSWORD: some_password    # Database password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data    # Persistent database storage
+      - ./init:/docker-entrypoint-initdb.d       # Initialization scripts
+    networks:
+      - guacamole_net
+
+  # Guacamole daemon service (guacd)
+  guacd:
+    image: guacamole/guacd:latest
+    container_name: guacd
+    restart: always
+    volumes:
+      - ./drive:/drive:rw    # Shared drive for file transfer
+      - ./record:/record:rw  # Session recording storage
+    networks:
+      - guacamole_net
+
+  # Guacamole web application
+  guacamole:
+    image: guacamole/guacamole:latest
+    container_name: guacamole
+    restart: always
+    depends_on:
+      - postgres
+      - guacd
+    environment:
+      GUACD_HOSTNAME: guacd               # Connection to guacd service
+      POSTGRESQL_HOSTNAME: postgres         # Database connection settings
+      POSTGRESQL_DATABASE: guacamole_db
+      POSTGRESQL_USER: guacamole_user
+      POSTGRESQL_PASSWORD: some_password
+      POSTGRESQL_PORT: 5432    # Guacamole configuration directory
+      JSON_SECRET_KEY: "4c0b569e4c96df157eee1b65dd0e4d41"  # Secret key for JSON authentication
+    ports:
+      - "8080:8080"  # Web interface port
+    networks:
+      - guacamole_net
+
+# Persistent volumes
+volumes:
+  postgres_data:  # Database storage
+
+# Internal network
+networks:
+  guacamole_net:
+    driver: bridge

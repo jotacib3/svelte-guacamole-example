@@ -1,0 +1,15 @@
+FROM alpine:latest
+
+# Install OpenSSH
+RUN apk add --no-cache openssh \
+    && ssh-keygen -A \
+    && echo "root:password123" | chpasswd
+
+# Configure SSH
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# Expose SSH port
+EXPOSE 22
+
+# Start SSH daemon
+CMD ["/usr/sbin/sshd", "-D"]
